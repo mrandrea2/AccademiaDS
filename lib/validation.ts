@@ -1,5 +1,8 @@
 import { z } from "zod";
 export const sourceSchema = z.object({
+  title: z.string().max(180).optional(),
+  section: z.string().max(500).optional(),
+  quote: z.string().max(600).optional(),
   documentId: z.string().optional(),
   page: z.number().int().positive().optional(),
   version: z.string().min(1),

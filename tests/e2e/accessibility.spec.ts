@@ -25,6 +25,7 @@ test("navigation, WCAG automated checks and responsive layout", async ({
     "normativa",
     "statistiche",
     "impostazioni",
+    "materiali",
   ]) {
     await page.goto(`/?section=${section}`);
     await expect(

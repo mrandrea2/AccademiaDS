@@ -1,5 +1,6 @@
 "use client";
-import { cases } from "@/lib/content";
+import { useCurated } from "@/lib/use-curated";
+import { cases as demoCases } from "@/lib/content";
 import type { StudyState } from "@/lib/models";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,8 @@ export function Written({
   update: Update;
   status: string;
 }) {
+  const curated = useCurated();
+  const cases = [...demoCases, ...curated.cases];
   const [minutes, setMinutes] = useState(30);
   const [remaining, setRemaining] = useState(1800);
   const [running, setRunning] = useState(false);
@@ -79,7 +82,7 @@ export function Written({
           </select>
         </label>
         <p className="scenario">{current.scenario}</p>
-        <Provenance />
+        <Provenance source={current.source} />
         <label>
           La tua risposta
           <textarea

@@ -1,4 +1,5 @@
 "use client";
+import type { SourceRef } from "@/lib/models";
 import type { StudyState } from "@/lib/models";
 import { BookOpen, ShieldCheck } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
@@ -58,12 +59,38 @@ export function Progress({ value, label }: { value: number; label: string }) {
     </div>
   );
 }
-export function Provenance() {
+export function Provenance({ source }: { source?: SourceRef }) {
+  const demo = !source || source.provenance === "demo";
   return (
-    <p className="source-note">
-      <ShieldCheck size={15} /> Contenuto dimostrativo · non verificato ·
-      versione demo-1 · non ufficiale
-    </p>
+    <>
+      <p className="source-note">
+        <ShieldCheck size={15} />
+        {demo
+          ? "Contenuto dimostrativo"
+          : source.provenance === "ai"
+            ? "Generato da AI · approvato per studio privato"
+            : "Contenuto personale · approvato per studio privato"}{" "}
+        ·{" "}
+        {source?.verification === "verified"
+          ? "verifica personale registrata"
+          : "fonte non verificata"}{" "}
+        · versione {source?.version ?? "demo-1"} · non ufficiale
+      </p>
+      {source?.documentId && (
+        <details>
+          <summary>
+            Fonte: {source.title ?? source.documentId} ·{" "}
+            {source.page
+              ? `pagina ${source.page}`
+              : (source.section ?? "sezione da verificare")}{" "}
+            · versione {source.version}
+          </summary>
+          {source.quote && (
+            <blockquote className="preserve">{source.quote}</blockquote>
+          )}
+        </details>
+      )}
+    </>
   );
 }
 export function addSession(

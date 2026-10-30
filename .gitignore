@@ -7,3 +7,9 @@ out/
 playwright-report/
 test-results/
 coverage/
+# Private source materials are never versioned. Fixtures are generated in memory.
+*.pdf
+*.docx
+*.docm
+/private-materials/
+*.ocr.json

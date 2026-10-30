@@ -26,3 +26,7 @@ Nessun dominio Vercel, progetto Supabase reale o invio email sono implicitamente
 ## Errore STATIC_BUILD_NO_OUT_DIR
 
 Se un vecchio deployment cerca una cartella `public`, usa un nuovo deployment del branch `main` contenente `vercel.json`. Il repository ora dichiara esplicitamente Next.js e `.next`, evitando di dipendere dal rilevamento automatico o da un precedente output statico. Non ridistribuire il vecchio commit `6c0c291`. Se l’errore permane sul nuovo commit, conserva il nuovo log: la sola build locale non permette di verificare le impostazioni effettive del progetto Vercel.
+
+## Attivazione dei materiali privati
+
+Applica le migrations 002/003 senza rieseguire la 001, abilita il tuo amministratore e controlla il bucket Private. Le variabili server opzionali Drive/OCR sono in .env.example: nessuna chiave segreta deve avere prefisso NEXT_PUBLIC_. Consulta docs/materials-setup.md e docs/google-drive-oauth.md. Il deploy del codice non crea automaticamente connessioni Google, non trasferisce i permessi Drive di ChatGPT e non importa libri.

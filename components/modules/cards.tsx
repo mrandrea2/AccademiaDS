@@ -1,5 +1,6 @@
 "use client";
-import { flashcards, topics } from "@/lib/content";
+import { useCurated } from "@/lib/use-curated";
+import { flashcards as demoFlashcards, topics } from "@/lib/content";
 import { scheduleReview } from "@/lib/learning";
 import type { StudyState } from "@/lib/models";
 import { useState, useEffect, useRef } from "react";
@@ -21,6 +22,8 @@ export function Cards({
   state: StudyState;
   update: Update;
 }) {
+  const curated = useCurated();
+  const flashcards = [...demoFlashcards, ...curated.flashcards];
   const now = useClock();
   const [revealed, setRevealed] = useState(false);
   const [all, setAll] = useState(false);
@@ -124,7 +127,7 @@ export function Cards({
           ) : (
             <Button onClick={() => setRevealed(true)}>Mostra risposta</Button>
           )}
-          <Provenance />
+          <Provenance source={card.source} />
         </Panel>
       ) : (
         <Panel>

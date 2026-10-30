@@ -1,6 +1,7 @@
 "use client";
 import { useWorkspace } from "@/lib/use-workspace";
 import {
+  FolderSync,
   ArrowUpRight,
   CalendarDays,
   ChartNoAxesCombined,
@@ -24,6 +25,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 
+import { Materials } from "./modules/materials";
 import { Cards } from "./modules/cards";
 import { Dashboard } from "./modules/dashboard";
 import { Legal } from "./modules/legal";
@@ -46,6 +48,7 @@ const nav = [
   { id: "tutor", label: "Tutor AI", icon: Sparkles },
   { id: "normativa", label: "Normativa", icon: Scale },
   { id: "statistiche", label: "Statistiche", icon: ChartNoAxesCombined },
+  { id: "materiali", label: "Materiali privati", icon: FolderSync },
   { id: "impostazioni", label: "Impostazioni", icon: Settings },
 ];
 export function Academy() {
@@ -266,6 +269,7 @@ export function Academy() {
             </div>
           ) : (
             <>
+              {section === "materiali" && <Materials />}
               {section === "dashboard" && <Dashboard state={state} go={go} />}
               {section === "biblioteca" && (
                 <LibraryModule
@@ -317,6 +321,8 @@ export function Academy() {
   );
 }
 const descriptions: Record<string, string> = {
+  materiali:
+    "Acquisizione privata, revisione e indicizzazione dei tuoi materiali. Accesso amministrativo richiesto.",
   biblioteca:
     "Le tue fonti, raccolte e tracciabili. Uno spazio privato per studiare con metodo.",
   percorsi:

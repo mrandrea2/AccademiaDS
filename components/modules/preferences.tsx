@@ -48,6 +48,11 @@ export function Preferences({
         <Panel>
           <h2>I tuoi dati, sotto il tuo controllo</h2>
           <p>
+            I materiali PDF/DOCX amministrativi sono separati da questo archivio
+            di progressi: eliminali da Materiali privati. L’eliminazione
+            dell’account rimuove anche gli originali privati.
+          </p>
+          <p>
             {connected
               ? "Il tuo archivio viene sincronizzato con l’account Supabase. I documenti sono privati e soggetti a RLS."
               : "In modalità demo i dati sono nel localStorage del browser, senza account. Chi accede a questo profilo del browser può leggerli."}

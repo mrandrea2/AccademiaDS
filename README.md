@@ -4,6 +4,16 @@ Piattaforma italiana di studio personale per la preparazione alla dirigenza scol
 
 **Contenuti inclusi: esclusivamente dimostrativi e non verificati.** Nessuna banca dati ufficiale, normativa validata, punteggio d’esame o data di concorso inventati. Le nove aree sono una tassonomia di studio da confrontare con il bando effettivamente applicabile. Il repository era vuoto all’inizio del lavoro: `PreparazioneDS2027.jsx` non è stato trovato localmente né sul remoto. Non è stata dichiarata una migrazione di contenuti mai esaminati.
 
+## Acquisizione privata PDF/DOCX e Google Drive
+
+La nuova area **Materiali privati** consente upload diretto a Supabase Storage, estrazione a lotti, revisione OCR, SHA-256, versioni, classificazione modificabile, indice full-text/pgvector e bozze didattiche con approvazione. Le fonti restano private e non verificate: nessun libro o token è nel repository. Google Drive è predisposto con OAuth indipendente, **non attivo senza credenziali e autorizzazione**. Non è stato dichiarato l’accesso ai 38 file della cartella indicata.
+
+Per attivare l’upload applica le migrations **002 e 003** dopo la 001 già presente e abilita il tuo account amministratore via SQL. Le chiavi Google e AI non servono per il caricamento manuale e la ricerca full-text.
+
+- [Configurazione storage e utilizzo della pipeline](docs/materials-setup.md)
+- [Google OAuth e sincronizzazione differenziale](docs/google-drive-oauth.md)
+- [Sicurezza, licenze e isolamento dei materiali](docs/materials-security.md)
+
 ## Avvio rapido
 
 Richiede Node.js 22.9+ (testato su Node 24), npm e Git.
@@ -33,7 +43,7 @@ Senza variabili Supabase l’applicazione funziona in **demo locale**, dichiarat
 | Statistiche   | Accuratezza per area, tempo medio, trend UTC a sette giorni, scadenze SM-2, suggerimento basato sull’area meno accurata                                                                     |
 | Impostazioni  | Obiettivo, esportazione/ripristino JSON validato, cancellazione archivio; login/registrazione/logout e cancellazione account quando Supabase è configurato                                  |
 
-**Limiti espliciti:** niente ingestione PDF/OCR, trascrizione automatica, corpus normativo curato, valutazione giuridica automatica o calendario del concorso. Il feedback scritto è strutturale, non un voto né una verifica delle citazioni. Le citazioni del tutor sono estratti rintracciabili, non garanzia della loro verità. L’AI può sbagliare anche quando cita un estratto esistente. Nessun processo di revisione editoriale delle fonti viene simulato.
+**Limiti espliciti:** nessun motore OCR incluso in Vercel (adapter esterno opzionale e trascrizione manuale disponibili), trascrizione audio automatica, corpus normativo curato, valutazione giuridica automatica o calendario del concorso. Il feedback scritto è strutturale, non un voto né una verifica delle citazioni. Le citazioni del tutor sono estratti rintracciabili, non garanzia della loro verità. L’AI può sbagliare anche quando cita un estratto esistente. Nessun processo di revisione editoriale delle fonti viene simulato.
 
 ## Supabase
 
@@ -50,7 +60,7 @@ I dati demo non vengono copiati implicitamente all’accesso. Esportali e ripris
 
 `AI_API_KEY` è solo server; `AI_MODEL` seleziona il modello (default `gpt-4.1-mini`). La richiesta usa l’endpoint HTTPS OpenAI Chat Completions. In assenza di chiave l’app restituisce gli estratti senza fingere una sintesi AI. In assenza di risultati non chiama il modello. Le citazioni sono validate rispetto agli estratti effettivamente recuperati, altrimenti la risposta viene rifiutata. Non è una difesa assoluta contro allucinazioni o prompt injection.
 
-Consenti `api.openai.com` nella rete dell’ambiente se attivi questa integrazione. La chiave non viene salvata nel client né nei documenti. Sono trasmessi domanda e massimo quattro estratti privati: configura il provider e informa chi usa l’istanza sulle condizioni di trattamento dati. Prima di un servizio pubblico a pagamento aggiungi quote per account e rate limiting distribuito secondo il budget: non è incluso un sistema di billing o di controllo dei costi multi-tenant.
+Consenti `api.openai.com` nella rete dell’ambiente se attivi questa integrazione. La chiave non viene salvata nel client né nei documenti. Nella pipeline PDF/DOCX il consenso esterno è separato per documento; ricerca semantica e sintesi del tutor sono opzioni esplicite. Sono trasmessi domanda e massimo quattro estratti privati: configura il provider e informa chi usa l’istanza sulle condizioni di trattamento dati. Prima di un servizio pubblico a pagamento aggiungi quote per account e rate limiting distribuito secondo il budget: non è incluso un sistema di billing o di controllo dei costi multi-tenant.
 
 ## Verifiche
 
@@ -69,7 +79,7 @@ Se Chromium è già installato, puoi evitare il download:
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e
 ```
 
-Vitest esercita SM-2, integrità della risposta dopo shuffle, metriche, retrieval, validazione degli import e la migration SQL su PostgreSQL WASM/PGlite, con il contratto Auth Supabase minimo. Testa RLS tra due utenti, FK composite, revisione ottimistica, indicizzazione per pagina e cancellazione account. Non sostituisce un test con le credenziali del tuo Supabase reale. Playwright copre desktop/mobile, persistenza, quiz, biblioteca, tutor, bozza scritta, flashcard, registro normativo e controlli automatici axe. La CI usa il Chromium ufficiale Playwright.
+Vitest esercita SM-2, shuffle, metriche, retrieval, validazione degli import, parser PDF/DOCX, pannello upload, OAuth simulato e tutte le migrations su PostgreSQL WASM/PGlite con pgvector e contratto Auth/Storage Supabase minimo. Testa RLS tra due utenti, FK composite, revisione ottimistica, indicizzazione per pagina e cancellazione account. Non sostituisce un test con le credenziali del tuo Supabase reale. Playwright copre desktop/mobile, persistenza, quiz, biblioteca, tutor, bozza scritta, flashcard, registro normativo e controlli automatici axe. La CI usa il Chromium ufficiale Playwright.
 
 ## Struttura
 

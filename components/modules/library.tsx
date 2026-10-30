@@ -55,11 +55,16 @@ export function LibraryModule({
           {adding ? "Chiudi modulo" : "Aggiungi documento"}
         </Button>
       </div>
+      <p>
+        <a className="text-link" href="?section=materiali">
+          Importa PDF/DOCX nell’area Materiali privati →
+        </a>
+      </p>
       <p className="notice">
         Importa testo semplice (.txt) o incolla un estratto di cui hai diritto
-        d’uso. I PDF non vengono pubblicati né elaborati. Separa le pagine con
-        un carattere di avanzamento pagina (form feed) per mantenere i
-        riferimenti.
+        d’uso. Per PDF e DOCX usa l’area amministrativa Materiali privati.
+        Separa le pagine con un carattere di avanzamento pagina (form feed) per
+        mantenere i riferimenti.
       </p>
       {adding && (
         <Panel>

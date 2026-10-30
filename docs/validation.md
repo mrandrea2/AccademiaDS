@@ -1,4 +1,43 @@
-# Verifiche eseguite
+# Verifiche attuali: acquisizione privata PDF/DOCX
+
+Esecuzione del 30 ottobre 2026, Node.js 24.19.0. Nessuna credenziale Supabase, Google OAuth, AI o OCR configurata nell’istanza di sviluppo; nessun libro reale importato.
+
+| Verifica                  | Esito                                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------------------- |
+| `npm run lint`            | Riuscito, nessun warning                                                                          |
+| `npm run typecheck`       | Riuscito, TypeScript strict                                                                       |
+| `npm test`                | **49 test passati** in 7 suite                                                                    |
+| `npm run build`           | Riuscito, nessun warning del parser PDF                                                           |
+| Tracing Vercel            | Worker PDF e font standard presenti nel manifest della funzione process                           |
+| E2E sul server production | **17 passati, 1 saltato intenzionalmente** (menu mobile nel progetto desktop)                     |
+| axe                       | Nessuna violazione automatica A/AA rilevata sulle 12 schermate in desktop e mobile (24 scansioni) |
+| Protezione Git            | PDF/DOCX ignorati; nessun originale privato o valore di credenziale presente nel commit           |
+
+I 49 test comprendono 10 test dei parser PDF/DOCX e della cifratura, 9 di apprendimento/validazione, 7 di OAuth/differenziale/citazioni/limiti di risposta, 7 del database legacy, 11 di schema materiali/pgvector/RLS/storage/revoca consensi/lease/deduplica, 2 del contratto di creazione bozze e 3 del pannello amministrativo.
+
+Sono esercitati parser reali su documenti generati in memoria e PostgreSQL WASM con pgvector. Il contratto minimo Supabase Auth/Storage è simulato nel database locale; OAuth e chiamate token Google usano risposte simulate. I test UI verificano che il binario vada allo Storage e solo i metadati alle API Vercel, e che una bozza non venga pubblicata automaticamente.
+
+Le suite browser verificano i flussi precedenti, la nuova schermata in assenza di credenziali e il rifiuto degli endpoint privati quando non configurati. Il pannello amministrativo autenticato è verificato nei test UI con risposte simulate, non contro un progetto Supabase ospitato. Le scansioni axe non certificano da sole conformità completa WCAG o comportamento con screen reader reali.
+
+## Richiedono ancora verifica nell’ambiente del proprietario
+
+- Upload e policy contro Supabase Storage reale, sessioni/cookie, limiti del piano e configurazione delle migrations 002/003.
+- Consenso OAuth reale, accesso ai 38 file indicati, refresh token, sincronizzazione e revoca su Google Drive.
+- OCR contro un motore esterno configurato, qualità dei manuali reali e revisione delle trascrizioni.
+- Embeddings e sintesi contro un provider AI reale, costi, condizioni di trattamento e adeguatezza delle risposte.
+- Esito del nuovo deployment Vercel: build locale e push GitHub non equivalgono a un’osservazione del deployment remoto.
+
+Comando E2E eseguito:
+
+```bash
+CI=1 PLAYWRIGHT_USE_PRODUCTION=1 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e
+```
+
+Il server dev precedentemente avviato è stato arrestato per assicurare che i test usassero il build production. Nessuna sincronizzazione reale viene dichiarata operativa in assenza di credenziali e consenso.
+
+---
+
+# Verifiche della prima versione (storico)
 
 Esecuzione del 30 ottobre 2026 nell’ambiente cloud, Node.js 24.19.0. Credenziali Supabase, AI e Vercel assenti; nessun file `.env` privato è stato creato.
 

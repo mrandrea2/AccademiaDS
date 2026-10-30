@@ -1,4 +1,5 @@
 "use client";
+import { useCurated } from "@/lib/use-curated";
 import { flashcards, lessons, topics } from "@/lib/content";
 import { accuracy, weakTopics } from "@/lib/learning";
 import type { StudyState } from "@/lib/models";
@@ -29,6 +30,7 @@ export function Dashboard({
   state: StudyState;
   go: (id: string) => void;
 }) {
+  const curated = useCurated();
   const now = useClock();
   const weekAgo = now - 7 * 86400000;
   const minutes = Math.round(
@@ -39,7 +41,7 @@ export function Dashboard({
   const completed = Math.round(
     (state.completedLessons.length / lessons.length) * 100,
   );
-  const due = flashcards.filter(
+  const due = [...flashcards, ...curated.flashcards].filter(
     (f) => !state.reviews[f.id] || Date.parse(state.reviews[f.id].due) <= now,
   ).length;
   const weak = weakTopics(state.attempts);
@@ -323,7 +325,8 @@ export function Dashboard({
                   `${topics.find((t) => t.id === w.id)?.title}: ${w.accuracy}% su ${w.count} risposte`,
               )
               .join(" · ")}
-            . Dati riferiti solo agli esercizi dimostrativi.
+            . Dati riferiti agli esercizi svolti, inclusi demo e contenuti
+            personali approvati.
           </p>
           <Button variant="outline" onClick={() => go("statistiche")}>
             Analizza i risultati

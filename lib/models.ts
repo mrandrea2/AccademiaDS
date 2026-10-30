@@ -1,6 +1,9 @@
 export type Verification = "unverified" | "verified" | "outdated";
 export type Provenance = "manual" | "ai" | "official" | "demo" | "personal";
 export interface SourceRef {
+  title?: string;
+  section?: string;
+  quote?: string;
   documentId?: string;
   page?: number;
   version: string;
@@ -99,6 +102,7 @@ export interface Review {
   quality?: number;
 }
 export interface Case {
+  steps?: string[];
   id: string;
   title: string;
   scenario: string;

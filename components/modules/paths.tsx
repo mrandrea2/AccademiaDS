@@ -1,4 +1,5 @@
 "use client";
+import { useCurated } from "@/lib/use-curated";
 import { lessons, topics } from "@/lib/content";
 import type { StudyState } from "@/lib/models";
 import { ArrowRight, Check } from "lucide-react";
@@ -19,8 +20,12 @@ export function Paths({
   state: StudyState;
   update: Update;
 }) {
+  const curated = useCurated();
   const [selected, setSelected] = useState<string | null>(null);
   const started = useRef(0);
+  const summaries = curated.summaries.filter(
+    (s) => !selected || s.topicId === selected,
+  );
   const lesson = lessons.find((l) => l.topicId === selected);
   return (
     <>
@@ -29,6 +34,21 @@ export function Paths({
         confronto con il programma ufficiale. Nessuna normativa viene
         considerata verificata.
       </p>
+      {summaries.length > 0 && (
+        <Panel>
+          <h2>Sintesi personali approvate</h2>
+          {summaries.map((summary) => (
+            <article key={summary.id}>
+              <Badge>
+                {topics.find((t) => t.id === summary.topicId)?.title}
+              </Badge>
+              <h3>{summary.title}</h3>
+              <p className="preserve">{summary.body}</p>
+              <Provenance source={summary.source} />
+            </article>
+          ))}
+        </Panel>
+      )}
       {lesson ? (
         <Panel>
           <button className="text-link" onClick={() => setSelected(null)}>

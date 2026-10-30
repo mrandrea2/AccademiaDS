@@ -2,7 +2,7 @@
 import { retrieve } from "@/lib/learning";
 import type { StudyState } from "@/lib/models";
 import { Search, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 import { Badge, Panel } from "@/components/shared";
@@ -14,7 +14,9 @@ interface TutorAnswer {
     document_id?: string;
     documentId?: string;
     title: string;
-    page: number;
+    page: number | null;
+    section?: string;
+    quotes?: string[];
     version: string;
     content?: string;
     text?: string;
@@ -30,6 +32,38 @@ export function Tutor({
   cloud: boolean;
   go: (id: string) => void;
 }) {
+  const [availableSources, setAvailableSources] = useState<
+    { id: string; title: string }[]
+  >([]);
+  const [sourceIds, setSourceIds] = useState<string[]>([]);
+  const [semantic, setSemantic] = useState(false);
+  const [synthesize, setSynthesize] = useState(false);
+  useEffect(() => {
+    if (!cloud) return;
+    fetch("/api/materials")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data)
+          setAvailableSources(
+            Array.from(
+              new Map(
+                (data.versions ?? [])
+                  .filter((v: { status: string }) => v.status === "indexed")
+                  .map(
+                    (v: {
+                      material_id: string;
+                      materials: { title: string };
+                    }) => [
+                      v.material_id,
+                      { id: v.material_id, title: v.materials.title },
+                    ],
+                  ),
+              ).values(),
+            ) as { id: string; title: string }[],
+          );
+      })
+      .catch(() => {});
+  }, [cloud]);
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState<TutorAnswer | null>(null);
   const [busy, setBusy] = useState(false);
@@ -64,13 +98,23 @@ export function Tutor({
                 const response = await fetch("/api/tutor", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ query }),
+                  body: JSON.stringify({
+                    query,
+                    sourceIds,
+                    semantic,
+                    synthesize,
+                  }),
                 });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error);
                 setAnswer(data);
               } else {
-                const sources = retrieve(query, state.documents);
+                const sources = retrieve(
+                  query,
+                  sourceIds.length
+                    ? state.documents.filter((d) => sourceIds.includes(d.id))
+                    : state.documents,
+                );
                 setAnswer({
                   answer: sources.length
                     ? "Ho trovato questi passaggi pertinenti nei tuoi documenti. Leggili nel loro contesto prima di formulare una conclusione."
@@ -101,6 +145,50 @@ export function Tutor({
               placeholder="Cerca un concetto nei documenti che hai aggiunto…"
             />
           </label>
+          <label>
+            Fonti (nessuna selezione: tutte le fonti disponibili)
+            <select
+              className="source-filter"
+              multiple
+              value={sourceIds}
+              onChange={(e) =>
+                setSourceIds(
+                  Array.from(e.target.selectedOptions).map((o) => o.value),
+                )
+              }
+            >
+              {[
+                ...availableSources,
+                ...state.documents.map((d) => ({ id: d.id, title: d.title })),
+              ].map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.title}
+                </option>
+              ))}
+            </select>
+          </label>
+          {cloud && (
+            <label className="check-label">
+              <input
+                type="checkbox"
+                checked={semantic}
+                onChange={(e) => setSemantic(e.target.checked)}
+              />
+              Ricerca semantica opzionale: invia la domanda al provider
+              embeddings se configurato.
+            </label>
+          )}
+          {cloud && (
+            <label className="check-label">
+              <input
+                type="checkbox"
+                checked={synthesize}
+                onChange={(e) => setSynthesize(e.target.checked)}
+              />
+              Richiedi sintesi AI (solo fonti con consenso esterno; massimo
+              quattro estratti).
+            </label>
+          )}
           <div className="inline-actions">
             <Button disabled={busy} type="submit">
               <Search size={18} />
@@ -136,14 +224,19 @@ export function Tutor({
                   [{i + 1}] {s.title}
                 </h3>
                 <p>
-                  Pagina {s.page} · versione {s.version} ·{" "}
+                  {s.page
+                    ? `Pagina ${s.page}`
+                    : `Sezione ${s.section || "non specificata"}`}{" "}
+                  · versione {s.version} ·{" "}
                   {answer.citations.includes(i + 1)
                     ? "citato nella risposta"
                     : "contesto recuperato"}{" "}
                   · fonte non verificata
                 </p>
                 <blockquote className="preserve">
-                  {s.content ?? s.text}
+                  {s.quotes?.length
+                    ? s.quotes.join("\n\n")
+                    : (s.content ?? s.text)}
                 </blockquote>
               </article>
             ))}

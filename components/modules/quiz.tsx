@@ -1,5 +1,6 @@
 "use client";
-import { questions, topics } from "@/lib/content";
+import { useCurated } from "@/lib/use-curated";
+import { questions as demoQuestions, topics } from "@/lib/content";
 import { accuracy, prepareQuestions } from "@/lib/learning";
 import type { Attempt, Question, StudyState } from "@/lib/models";
 import { ArrowRight, Check } from "lucide-react";
@@ -15,6 +16,8 @@ import {
   type Update,
 } from "@/components/shared";
 export function Quiz({ state, update }: { state: StudyState; update: Update }) {
+  const curated = useCurated();
+  const questions = [...demoQuestions, ...curated.questions];
   const [area, setArea] = useState("");
   const [difficulty, setDifficulty] = useState("");
   const [mode, setMode] = useState("allenamento");
@@ -124,9 +127,10 @@ export function Quiz({ state, update }: { state: StudyState; update: Update }) {
   return (
     <>
       <p className="notice">
-        Quesiti dimostrativi di metodo, non domande ufficiali né una banca dati
-        di preparazione normativa. La simulazione segue i parametri personali
-        impostati, non un regolamento d’esame certificato.
+        Quesiti demo e bozze personali approvate, distinguibili per provenienza.
+        Non domande ufficiali né una banca dati di preparazione normativa. La
+        simulazione segue i parametri personali impostati, non un regolamento
+        d’esame certificato.
       </p>
       {!run.length ? (
         <Panel>
@@ -318,7 +322,7 @@ export function Quiz({ state, update }: { state: StudyState; update: Update }) {
                   : "Rivediamo il ragionamento"}
               </h3>
               <p>{question.explanation}</p>
-              <Provenance />
+              <Provenance source={question.source} />
             </div>
           )}
           <div className="inline-actions">

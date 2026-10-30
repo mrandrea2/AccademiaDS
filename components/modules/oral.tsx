@@ -1,5 +1,6 @@
 "use client";
-import { cases } from "@/lib/content";
+import { useCurated } from "@/lib/use-curated";
+import { cases as demoCases } from "@/lib/content";
 import type { StudyState } from "@/lib/models";
 import { Download, Mic } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -12,6 +13,8 @@ import {
   type Update,
 } from "@/components/shared";
 export function Oral({ state, update }: { state: StudyState; update: Update }) {
+  const curated = useCurated();
+  const cases = [...demoCases, ...curated.cases];
   const [caseId, setCaseId] = useState(cases[0].id);
   const [recording, setRecording] = useState(false);
   const [audio, setAudio] = useState("");
@@ -100,16 +103,18 @@ export function Oral({ state, update }: { state: StudyState; update: Update }) {
         <p className="scenario">
           {cases.find((c) => c.id === caseId)?.scenario}
         </p>
-        <Provenance />
+        <Provenance source={cases.find((c) => c.id === caseId)?.source} />
         <h3>Cinque passi per la soluzione</h3>
         <ol className="steps">
-          {[
-            "Descrivi il problema e il contesto.",
-            "Distingui fatti, ipotesi e informazioni mancanti.",
-            "Individua fonti e soggetti da coinvolgere.",
-            "Confronta le opzioni e motiva la scelta.",
-            "Definisci azioni, tempi e indicatori di verifica.",
-          ].map((s) => (
+          {(
+            cases.find((c) => c.id === caseId)?.steps ?? [
+              "Descrivi il problema e il contesto.",
+              "Distingui fatti, ipotesi e informazioni mancanti.",
+              "Individua fonti e soggetti da coinvolgere.",
+              "Confronta le opzioni e motiva la scelta.",
+              "Definisci azioni, tempi e indicatori di verifica.",
+            ]
+          ).map((s) => (
             <li key={s}>{s}</li>
           ))}
         </ol>

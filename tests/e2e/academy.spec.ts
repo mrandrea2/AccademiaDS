@@ -182,3 +182,37 @@ test("unconfigured private endpoints fail closed without claiming cloud access",
   });
   expect(deletion.status()).toBe(503);
 });
+test("private acquisition stays disabled without credentials and never fakes a Drive sync", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/?section=materiali");
+  await expect(
+    page.getByRole("heading", {
+      name: "Materiali privati: configura prima Supabase",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Sincronizza manualmente" }),
+  ).toHaveCount(0);
+  for (const path of [
+    "/api/materials",
+    "/api/materials/review?versionId=11111111-1111-4111-8111-111111111111",
+    "/api/drive/connect",
+  ]) {
+    const response = await request.get(path);
+    expect(response.status()).toBe(503);
+  }
+  for (const path of [
+    "/api/materials/upload",
+    "/api/materials/process",
+    "/api/materials/review",
+    "/api/materials/drafts",
+    "/api/materials/generate",
+    "/api/drive/sync",
+    "/api/drive/disconnect",
+  ]) {
+    const response = await request.post(path, { data: {} });
+    expect(response.status()).toBe(503);
+  }
+});

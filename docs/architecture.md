@@ -25,3 +25,7 @@ Demo: ricerca lessicale nel testo locale. Account: segmentazione per pagina (for
 ## Accessibilità
 
 HTML semantico, lingua italiana, skip link, focus visibile, etichette dei form, fieldset radio, pulsanti nativi, stato dei salvataggi annunciato, progressbar accessibili, caricamento ed errori espliciti. Layout mobile con menu apribile da pulsante e chiusura esplicita; animazioni disattivate con prefers-reduced-motion. I controlli axe non sostituiscono una verifica manuale con screen reader.
+
+## Estensione materiali (migrations 002/003)
+
+L’acquisizione PDF/DOCX usa un modello normalizzato separato: materials, versioni, segmenti, chunk full-text/pgvector, eventi, bozze e sincronizzazioni Drive. Non viene inserita nello snapshot JSON e non viene cancellata da save_workspace. Il tutor cerca anche queste fonti con filtri applicati nel DB; l’accesso è limitato al proprietario amministratore. I paragrafi precedenti sul retrieval soltanto lessicale descrivono il percorso legacy .txt, mantenuto compatibile. Vedi docs/materials-setup.md e docs/materials-security.md per lo stato attuale completo.
