@@ -1,0 +1,4 @@
+-- Intentionally no shared or fabricated production data.
+-- Minimal clearly-labelled demo seed lives in lib/content.ts and is loaded locally
+-- or into a new authenticated UI workspace. Auth users must be created by Supabase Auth.
+-- No proprietary documents, official exam questions or legal assertions are seeded.
