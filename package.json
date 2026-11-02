@@ -1,5 +1,13 @@
 {
-  "name": "accademia-ds-local", "version": "1.0.0", "private": true, "type": "module",
-  "scripts": {"dev":"npx serve . -l 3000", "test":"node --test tests/*.test.js"},
-  "engines":{"node":">=20"}
+  "name": "accademia-ds-local",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx serve . -l 3000",
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
 }

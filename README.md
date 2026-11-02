@@ -38,3 +38,13 @@ Non caricare i quattro manuali commerciali o documenti riservati nella cartella 
 
 ## Costi
 Nessun costo per Supabase. Vercel e Anthropic possono applicare i limiti, costi e termini dei rispettivi piani.
+
+## Versione 1.1 — percorso guidato e PDF
+
+- **Oggi: il tuo piano**: sequenza suggerita di recupero attivo, studio essenziale e quiz; scelta 20–90 minuti al giorno. I progressi sono salvati localmente.
+- **Studio guidato**: nove lezioni introduttive originali, ciascuna con testo, tre obiettivi di padronanza e recupero attivo. Non rappresentano un corso completo o una sintesi verificata dei 42 documenti dell'utente.
+- **Flashcard**: prima pianificazione di richiami a 1, 3, 7, 14, 30 e 60 giorni sulla base della valutazione soggettiva. È un'euristica didattica, non un sistema FSRS validato o una misura scientifica personalizzata della memoria.
+- **Biblioteca PDF**: usa PDF.js via CDN dal browser per estrarre il testo dei PDF digitali. Richiede connessione al primo utilizzo e non supporta OCR. I PDF con sole immagini richiedono un passaggio OCR esterno. Per contenere la quota IndexedDB memorizza al massimo 500 mila caratteri per documento, segnalandone il troncamento.
+- **Appunti Claude**: il pulsante invia soltanto il primo estratto fino a 14.000 caratteri ad Anthropic tramite `/api/chat`; genera una sintesi parziale che non può essere descritta come riassunto completo dell'intero manuale. Richiede `APP_PASSWORD` e `ANTHROPIC_API_KEY` su Vercel. Può generare costi. Verificare citazioni e normativa.
+- Importando un libro non vengono generati automaticamente tutti i capitoli. La conversione completa in un curriculum personalizzato e la verifica normativa automatica restano evoluzioni da sviluppare.
+- **Sicurezza**: il materiale inserito in IndexedDB è disponibile agli utenti del browser locale e non è cifrato. Non usare computer condivisi per documenti sensibili. L'endpoint AI è protetto da password ma non include rate limiting robusto; prima di un'esposizione pubblica aggiungere limiti server-side o protezione della distribuzione.
